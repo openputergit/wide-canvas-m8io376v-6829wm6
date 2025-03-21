@@ -1,0 +1,2154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PointBlack Coding Club</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    <style>
+        :root {
+            --primary: #1a8a1a;
+            --secondary: #121212;
+        }
+        @font-face {
+            font-family: 'Bell MT';
+            src: url('https://db.onlinewebfonts.com/t/05bdf0c01f2a9aa039680f7a3444f445.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+        }
+        body {
+            font-family: 'Bell MT', serif;
+            background-color: var(--secondary);
+            color: #fff;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('https://images.unsplash.com/photo-1485827404703-89b55fcc595e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80');
+            background-attachment: fixed;
+            background-size: cover;
+        }
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+        .nav-active {
+            border-bottom: 2px solid var(--primary);
+        }
+        .bell-mt {
+            font-family: 'Bell MT', serif;
+        }
+        .swiper {
+            width: 100%;
+            height: 300px;
+            margin-bottom: 20px;
+        }
+        .swiper-slide {
+            text-align: center;
+            background: #1f1f1f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .swiper-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .swiper-pagination-bullet {
+            background: #fff;
+            opacity: 0.5;
+        }
+        .swiper-pagination-bullet-active {
+            background: #1a8a1a;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-black/90 backdrop-blur-sm z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="text-2xl font-bold text-green-500">Point<span class="text-white">Black</span></div>
+            <div id="nav-links" class="hidden md:flex space-x-6">
+                <a href="#" class="nav-active" onclick="switchPage('dashboard')">Dashboard</a>
+                <a href="#" onclick="switchPage('attendance')">Attendance</a>
+                <a href="#" onclick="switchPage('progress')">Progress</a>
+                <a href="#" onclick="switchPage('resources')">Resources</a>
+                <a href="#" onclick="switchPage('projects')">Projects</a>
+                <a href="#" onclick="switchPage('profile')">Profile</a>
+                <a href="#" onclick="switchPage('club-progress')">Club Progress</a>
+                <a href="#" onclick="switchPage('domains')">Domains</a>
+                <a href="#" onclick="switchPage('events')">Events</a>
+            </div>
+            <div id="profile-section" class="hidden md:flex items-center space-x-4">
+                <img id="user-avatar" class="w-8 h-8 rounded-full" src="" alt="Profile">
+                <button onclick="logout()" class="text-red-500"><i class="bi bi-box-arrow-right"></i></button>
+            </div>
+            <button class="md:hidden" onclick="toggleMobileMenu()">
+                <i class="bi bi-list text-2xl"></i>
+            </button>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden p-4 bg-black/95">
+            <div class="flex flex-col space-y-4">
+                <a href="#" onclick="switchPage('dashboard')">Dashboard</a>
+                <a href="#" onclick="switchPage('attendance')">Attendance</a>
+                <a href="#" onclick="switchPage('progress')">Progress</a>
+                <a href="#" onclick="switchPage('resources')">Resources</a>
+                <a href="#" onclick="switchPage('projects')">Projects</a>
+                <a href="#" onclick="switchPage('profile')">Profile</a>
+                <a href="#" onclick="switchPage('club-progress')">Club Progress</a>
+                <a href="#" onclick="switchPage('domains')">Domains</a>
+                <a href="#" onclick="switchPage('events')">Events</a>
+                <button onclick="logout()" class="text-red-500"><i class="bi bi-box-arrow-right"></i> Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Page -->
+    <div id="login-page" class="min-h-screen flex items-center justify-center p-4" style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80'); background-size: cover; background-position: center;">
+        <div class="bg-black/80 p-8 rounded-lg w-full max-w-md backdrop-blur-sm border border-green-500/30">
+            <div class="flex justify-center mb-6">
+                <div class="text-4xl font-bold text-green-500">Point<span class="text-white">Black</span></div>
+            </div>
+            <h2 class="bell-mt text-2xl font-bold text-center mb-6">Coding Club Registration</h2>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="block mb-2 bell-mt">Full Name</label>
+                    <input type="text" id="user-name-input" required class="w-full p-2 rounded bg-gray-800 border border-green-500/30 focus:border-green-500 focus:outline-none bell-mt">
+                </div>
+                <div>
+                    <label class="block mb-2 bell-mt">Email</label>
+                    <input type="email" required class="w-full p-2 rounded bg-gray-800 border border-green-500/30 focus:border-green-500 focus:outline-none bell-mt">
+                </div>
+                <div>
+                    <label class="block mb-2 bell-mt">Domain</label>
+                    <select id="user-domain-select" required class="w-full p-2 rounded bg-gray-800 border border-green-500/30 focus:border-green-500 focus:outline-none bell-mt">
+                        <option value="">Select Domain</option>
+                        <option value="UI/UX Design">UI/UX Design</option>
+                        <option value="Graphic Design">Graphic Design</option>
+                        <option value="Web Development">Web Development</option>
+                        <option value="Data Science">Data Science</option>
+                        <option value="DevOps">DevOps</option>
+                        <option value="App Development">App Development</option>
+                        <option value="Machine Learning">Machine Learning</option>
+                        <option value="Full Stack">Full Stack</option>
+                        <option value="Cybersecurity">Cybersecurity</option>
+                        <option value="Deep Learning">Deep Learning</option>
+                        <option value="Competitive Programming">Competitive Programming</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block mb-2 bell-mt">Experience Level</label>
+                    <select required class="w-full p-2 rounded bg-gray-800 border border-green-500/30 focus:border-green-500 focus:outline-none bell-mt">
+                        <option value="">Select Level</option>
+                        <option value="beginner">Beginner</option>
+                        <option value="intermediate">Intermediate</option>
+                        <option value="advanced">Advanced</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block mb-2 bell-mt">Profile Photo</label>
+                    <input type="file" id="profile-photo" accept="image/*" required class="w-full p-2 rounded bg-gray-800 border border-green-500/30 bell-mt">
+                </div>
+                <div class="flex items-center space-x-2 mt-2">
+                    <input type="checkbox" required class="w-4 h-4 bg-gray-800 border border-green-500">
+                    <label class="text-sm bell-mt">I agree to attend offline meets regularly</label>
+                </div>
+                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 p-2 rounded font-semibold transition duration-300 bell-mt">Join PointBlack Club</button>
+            </form>
+            <p class="text-center mt-4 text-sm text-gray-400 bell-mt">Already a member? <button onclick="loginExisting()" class="text-green-400 hover:underline">Sign In</button></p>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="hidden pt-20 container mx-auto px-4 pb-10">
+        <h1 class="text-3xl font-bold mb-2 bell-mt">Welcome, <span id="user-name">Developer</span>!</h1>
+        <p class="text-green-400 mb-4 bell-mt"><span id="user-domain">Frontend Development</span> Domain</p>
+        
+        <!-- Domain Slider -->
+        <div class="swiper mySwiper mb-8">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                    <div class="w-full h-full flex flex-col justify-center items-center p-4 bg-gradient-to-br from-green-900 to-black">
+                        <i class="bi bi-palette text-5xl mb-3"></i>
+                        <h3 class="text-xl font-semibold">UI/UX Design</h3>
+                        <p class="text-sm mt-2">Create intuitive and beautiful user interfaces</p>
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="w-full h-full flex flex-col justify-center items-center p-4 bg-gradient-to-br from-blue-900 to-black">
+                        <i class="bi bi-code-slash text-5xl mb-3"></i>
+                        <h3 class="text-xl font-semibold">Web Development</h3>
+                        <p class="text-sm mt-2">Build responsive and dynamic websites</p>
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="w-full h-full flex flex-col justify-center items-center p-4 bg-gradient-to-br from-purple-900 to-black">
+                        <i class="bi bi-phone text-5xl mb-3"></i>
+                        <h3 class="text-xl font-semibold">App Development</h3>
+                        <p class="text-sm mt-2">Develop mobile applications for iOS and Android</p>
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="w-full h-full flex flex-col justify-center items-center p-4 bg-gradient-to-br from-yellow-900 to-black">
+                        <i class="bi bi-clipboard-data text-5xl mb-3"></i>
+                        <h3 class="text-xl font-semibold">Data Science</h3>
+                        <p class="text-sm mt-2">Extract insights from data using analytics</p>
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="w-full h-full flex flex-col justify-center items-center p-4 bg-gradient-to-br from-red-900 to-black">
+                        <i class="bi bi-gear text-5xl mb-3"></i>
+                        <h3 class="text-xl font-semibold">DevOps</h3>
+                        <p class="text-sm mt-2">Streamline development and operations processes</p>
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="w-full h-full flex flex-col justify-center items-center p-4 bg-gradient-to-br from-indigo-900 to-black">
+                        <i class="bi bi-robot text-5xl mb-3"></i>
+                        <h3 class="text-xl font-semibold">Machine Learning</h3>
+                        <p class="text-sm mt-2">Develop systems that can learn from data</p>
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="w-full h-full flex flex-col justify-center items-center p-4 bg-gradient-to-br from-teal-900 to-black">
+                        <i class="bi bi-layers text-5xl mb-3"></i>
+                        <h3 class="text-xl font-semibold">Full Stack</h3>
+                        <p class="text-sm mt-2">Work with both front-end and back-end technologies</p>
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="w-full h-full flex flex-col justify-center items-center p-4 bg-gradient-to-br from-gray-700 to-black">
+                        <i class="bi bi-shield-lock text-5xl mb-3"></i>
+                        <h3 class="text-xl font-semibold">Cybersecurity</h3>
+                        <p class="text-sm mt-2">Protect systems from digital attacks</p>
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="w-full h-full flex flex-col justify-center items-center p-4 bg-gradient-to-br from-lime-900 to-black">
+                        <i class="bi bi-cpu text-5xl mb-3"></i>
+                        <h3 class="text-xl font-semibold">Deep Learning</h3>
+                        <p class="text-sm mt-2">Create neural networks for complex tasks</p>
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="w-full h-full flex flex-col justify-center items-center p-4 bg-gradient-to-br from-amber-900 to-black">
+                        <i class="bi bi-trophy text-5xl mb-3"></i>
+                        <h3 class="text-xl font-semibold">Competitive Programming</h3>
+                        <p class="text-sm mt-2">Solve algorithmic problems efficiently</p>
+                    </div>
+                </div>
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+                <h3 class="text-xl font-semibold mb-4 bell-mt">Upcoming Meets</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between p-3 bg-gray-800/80 rounded">
+                        <div>
+                            <span class="bell-mt">Web Development Workshop</span>
+                            <p class="text-sm text-gray-400 bell-mt">Room 302, Tech Building</p>
+                        </div>
+                        <span class="text-green-500 bell-mt">Today, 5 PM</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-800/80 rounded">
+                        <div>
+                            <span class="bell-mt">AI Project Discussion</span>
+                            <p class="text-sm text-gray-400 bell-mt">Room 105, CS Department</p>
+                        </div>
+                        <span class="text-gray-400 bell-mt">Tomorrow, 4 PM</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-800/80 rounded">
+                        <div>
+                            <span class="bell-mt">Hackathon Preparation</span>
+                            <p class="text-sm text-gray-400 bell-mt">Online (Discord)</p>
+                        </div>
+                        <span class="text-gray-400 bell-mt">Oct 25, 6 PM</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+                <h3 class="text-xl font-semibold mb-4 bell-mt">Your Progress</h3>
+                <div class="space-y-3">
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="bell-mt">Tasks Completed</span>
+                            <span class="bell-mt">75%</span>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-2">
+                            <div class="bg-green-500 rounded-full h-2" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="bell-mt">Attendance</span>
+                            <span class="bell-mt">90%</span>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-2">
+                            <div class="bg-green-500 rounded-full h-2" style="width: 90%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="bell-mt">Domain Skills</span>
+                            <span class="bell-mt">65%</span>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-2">
+                            <div class="bg-green-500 rounded-full h-2" style="width: 65%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-4">
+                    <button onclick="switchPage('progress')" class="text-green-400 hover:underline bell-mt">View Detailed Progress →</button>
+                </div>
+            </div>
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+                <h3 class="text-xl font-semibold mb-4 bell-mt">Quick Actions</h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="switchPage('attendance')" class="p-3 bg-green-600 rounded-lg hover:bg-green-700 transition duration-300 bell-mt">Mark Attendance</button>
+                    <button onclick="switchPage('projects')" class="p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition duration-300 bell-mt">Submit Project</button>
+                    <button onclick="switchPage('resources')" class="p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition duration-300 bell-mt">View Resources</button>
+                    <button onclick="openHelpModal()" class="p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition duration-300 bell-mt">Get Help</button>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="text-2xl font-bold mt-10 mb-6 bell-mt">Club Activity</h2>
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+                <h3 class="text-xl font-semibold mb-4 bell-mt">Recent Announcements</h3>
+                <div class="space-y-3">
+                    <div class="p-3 bg-gray-800/80 rounded">
+                        <div class="font-semibold bell-mt">Upcoming Hackathon!</div>
+                        <p class="text-sm text-gray-300 bell-mt">Registration for the annual college hackathon is now open. PointBlack members get priority.</p>
+                        <p class="text-xs text-gray-400 mt-2 bell-mt">Posted 2 days ago</p>
+                    </div>
+                    <div class="p-3 bg-gray-800/80 rounded">
+                        <div class="font-semibold bell-mt">New Learning Resources</div>
+                        <p class="text-sm text-gray-300 bell-mt">We've added new AI/ML resources to our library. Check them out!</p>
+                        <p class="text-xs text-gray-400 mt-2 bell-mt">Posted 4 days ago</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+                <h3 class="text-xl font-semibold mb-4 bell-mt">Top Contributors</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center p-3 bg-gray-800/80 rounded">
+                        <div class="mr-3 w-10 h-10 flex items-center justify-center bg-yellow-600 rounded-full">1</div>
+                        <div>
+                            <div class="font-semibold bell-mt">Alex Johnson</div>
+                            <div class="text-sm text-gray-400 bell-mt">120 contribution points</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center p-3 bg-gray-800/80 rounded">
+                        <div class="mr-3 w-10 h-10 flex items-center justify-center bg-gray-500 rounded-full">2</div>
+                        <div>
+                            <div class="font-semibold bell-mt">Maya Patel</div>
+                            <div class="text-sm text-gray-400 bell-mt">95 contribution points</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center p-3 bg-gray-800/80 rounded">
+                        <div class="mr-3 w-10 h-10 flex items-center justify-center bg-amber-700 rounded-full">3</div>
+                        <div>
+                            <div class="font-semibold bell-mt">Raj Sharma</div>
+                            <div class="text-sm text-gray-400 bell-mt">87 contribution points</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attendance System -->
+    <div id="attendance" class="hidden pt-20 container mx-auto px-4 pb-10">
+        <h2 class="text-2xl font-bold mb-2 bell-mt">Attendance System</h2>
+        <p class="text-gray-400 mb-6 bell-mt">Track and manage your attendance for club meetings</p>
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+                <h3 class="text-xl font-semibold mb-4 bell-mt">Mark Today's Attendance</h3>
+                <form id="attendance-form" class="space-y-4">
+                    <div>
+                        <label class="block mb-2 bell-mt">Meeting Topic</label>
+                        <input type="text" required class="w-full p-2 rounded bg-gray-800 border border-green-500/30 focus:border-green-500 focus:outline-none bell-mt">
+                    </div>
+                    <div>
+                        <label class="block mb-2 bell-mt">Verification Code</label>
+                        <input type="text" required placeholder="Enter code provided by mentor" class="w-full p-2 rounded bg-gray-800 border border-green-500/30 focus:border-green-500 focus:outline-none bell-mt">
+                    </div>
+                    <div>
+                        <label class="block mb-2 bell-mt">Notes (Optional)</label>
+                        <textarea class="w-full p-2 rounded bg-gray-800 border border-green-500/30 focus:border-green-500 focus:outline-none bell-mt" rows="3"></textarea>
+                    </div>
+                    <div class="flex items-center space-x-2 mt-3">
+                        <input type="checkbox" class="w-4 h-4 bg-gray-800 border border-green-500">
+                        <span class="text-sm bell-mt">I confirm I am physically present at the meeting</span>
+                    </div>
+                    <button type="submit" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded transition duration-300 bell-mt">Mark Present</button>
+                </form>
+            </div>
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+                <h3 class="text-xl font-semibold mb-4 bell-mt">Attendance History</h3>
+                <div class="mb-4">
+                    <div class="bg-gray-800/50 p-3 rounded mb-3">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-lg font-semibold bell-mt">October 2023</span>
+                            <span class="text-green-400 bell-mt">90% Attendance</span>
+                        </div>
+                        <div class="grid grid-cols-7 gap-1">
+                            <div class="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-xs">1</div>
+                            <div class="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center text-xs">2</div>
+                            <div class="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center text-xs">3</div>
+                            <div class="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-xs">4</div>
+                            <div class="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center text-xs">5</div>
+                            <div class="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center text-xs">6</div>
+                            <div class="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-xs">7</div>
+                            <div class="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center text-xs">8</div>
+                            <div class="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center text-xs">9</div>
+                            <div class="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-xs">10</div>
+                            <div class="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center text-xs">11</div>
+                            <div class="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center text-xs">12</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-3 mt-6">
+                    <div class="flex justify-between items-center p-3 bg-gray-800 rounded">
+                        <div>
+                            <div class="font-semibold bell-mt">Web Development Workshop</div>
+                            <div class="text-sm text-gray-400 bell-mt">October 15, 2023</div>
+                        </div>
+                        <span class="text-green-500 bell-mt">Present</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-gray-800 rounded">
+                        <div>
+                            <div class="font-semibold bell-mt">AI Project Discussion</div>
+                            <div class="text-sm text-gray-400 bell-mt">October 14, 2023</div>
+                        </div>
+                        <span class="text-red-500 bell-mt">Absent</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-gray-800 rounded">
+                        <div>
+                            <div class="font-semibold bell-mt">Blockchain Seminar</div>
+                            <div class="text-sm text-gray-400 bell-mt">October 12, 2023</div>
+                        </div>
+                        <span class="text-green-500 bell-mt">Present</span>
+                    </div>
+                </div>
+                <div class="mt-4 text-center">
+                    <button class="text-green-400 hover:underline bell-mt">View Full History →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Tracking -->
+    <div id="progress" class="hidden pt-20 container mx-auto px-4 pb-10">
+        <h2 class="text-2xl font-bold mb-2 bell-mt"><span id="progress-user-name">Developer's</span> Progress Tracking</h2>
+        <p class="text-gray-400 mb-6 bell-mt">Track your skills, achievements and growth over time</p>
+        
+        <div class="grid md:grid-cols-2 gap-6 mb-6">
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+                <h3 class="text-xl font-semibold mb-4 bell-mt">Skills Overview</h3>
+                <div class="mb-4">
+                    <canvas id="skillsChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+                <h3 class="text-xl font-semibold mb-4 bell-mt">Activity Breakdown</h3>
+                <div class="mb-4">
+                    <canvas id="activityPieChart" width="200" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+                <h3 class="text-xl font-semibold mb-4 bell-mt">Skills Progress</h3>
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="bell-mt">HTML/CSS</span>
+                            <span class="bell-mt">90%</span>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-2">
+                            <div class="bg-green-500 rounded-full h-2" style="width: 90%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="bell-mt">JavaScript</span>
+                            <span class="bell-mt">75%</span>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-2">
+                            <div class="bg-green-500 rounded-full h-2" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="bell-mt">React</span>
+                            <span class="bell-mt">60%</span>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-2">
+                            <div class="bg-green-500 rounded-full h-2" style="width: 60%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="bell-mt">Node.js</span>
+                            <span class="bell-mt">45%</span>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-2">
+                            <div class="bg-green-500 rounded-full h-2" style="width: 45%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="bell-mt">Git</span>
+                            <span class="bell-mt">80%</span>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-2">
+                            <div class="bg-green-500 rounded-full h-2" style="width: 80%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+                <h3 class="text-xl font-semibold mb-4 bell-mt">Completed Projects</h3>
+                <div class="space-y-3">
+                    <div class="p-3 bg-gray-800 rounded">
+                        <div class="font-semibold bell-mt">Personal Portfolio</div>
+                        <div class="text-sm text-gray-400 bell-mt">Grade: A</div>
+                        <div class="flex mt-2">
+                            <span class="text-xs px-2 py-1 bg-green-900 rounded-full mr-2 bell-mt">HTML</span>
+                            <span class="text-xs px-2 py-1 bg-green-900 rounded-full mr-2 bell-mt">CSS</span>
+                            <span class="text-xs px-2 py-1 bg-green-900 rounded-full bell-mt">JavaScript</span>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-gray-800 rounded">
+                        <div class="font-semibold bell-mt">Todo App</div>
+                        <div class="text-sm text-gray-400 bell-mt">Grade: B+</div>
+                        <div class="flex mt-2">
+                            <span class="text-xs px-2 py-1 bg-green-900 rounded-full mr-2 bell-mt">React</span>
+                            <span class="text-xs px-2 py-1 bg-green-900 rounded-full mr-2 bell-mt">CSS</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+                <h3 class="text-xl font-semibold mb-4 bell-mt">Achievements</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center space-x-3">
+                        <i class="bi bi-trophy-fill text-yellow-500 text-2xl"></i>
+                        <div>
+                            <div class="font-semibold bell-mt">Perfect Attendance</div>
+                            <div class="text-sm text-gray-400 bell-mt">30 days streak</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <i class="bi bi-award-fill text-blue-500 text-2xl"></i>
+                        <div>
+                            <div class="font-semibold bell-mt">Code Master</div>
+                            <div class="text-sm text-gray-400 bell-mt">Completed 10 projects</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <i class="bi bi-star-fill text-yellow-500 text-2xl"></i>
+                        <div>
+                            <div class="font-semibold bell-mt">Problem Solver</div>
+                            <div class="text-sm text-gray-400 bell-mt">Solved 50 coding challenges</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <i class="bi bi-lightning-fill text-yellow-500 text-2xl"></i>
+                        <div>
+                            <div class="font-semibold bell-mt">Quick Learner</div>
+                            <div class="text-sm text-gray-400 bell-mt">Completed 5 courses in a month</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="text-2xl font-bold mt-10 mb-6 bell-mt">Learning Path Progress</h2>
+        <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+            <h3 class="text-xl font-semibold mb-6 bell-mt">Frontend Development Path</h3>
+            <div class="relative">
+                <div class="absolute left-0 ml-3 h-full w-0.5 bg-green-600"></div>
+                <div class="space-y-8 ml-6">
+                    <div class="relative">
+                        <div class="absolute -left-8 w-6 h-6 rounded-full bg-green-600 flex items-center justify-center">✓</div>
+                        <div>
+                            <h4 class="font-semibold bell-mt">HTML & CSS Fundamentals</h4>
+                            <p class="text-sm text-gray-400 bell-mt">Completed on September 1, 2023</p>
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -left-8 w-6 h-6 rounded-full bg-green-600 flex items-center justify-center">✓</div>
+                        <div>
+                            <h4 class="font-semibold bell-mt">JavaScript Basics</h4>
+                            <p class="text-sm text-gray-400 bell-mt">Completed on September 15, 2023</p>
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -left-8 w-6 h-6 rounded-full bg-green-600 border-2 border-green-700 flex items-center justify-center">⟳</div>
+                        <div>
+                            <h4 class="font-semibold bell-mt">React Fundamentals</h4>
+                            <p class="text-sm text-gray-400 bell-mt">In progress - 60% complete</p>
+                            <div class="w-full mt-2 bg-gray-700 rounded-full h-2">
+                                <div class="bg-green-500 rounded-full h-2" style="width: 60%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -left-8 w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center">-</div>
+                        <div>
+                            <h4 class="font-semibold bell-mt">Advanced React & State Management</h4>
+                            <p class="text-sm text-gray-400 bell-mt">Not started</p>
+                        </div>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -left-8 w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center">-</div>
+                        <div>
+                            <h4 class="font-semibold bell-mt">Full-Stack Integration</h4>
+                            <p class="text-sm text-gray-400 bell-mt">Not started</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resources Page -->
+    <div id="resources" class="hidden pt-20 container mx-auto px-4 pb-10">
+        <h2 class="text-2xl font-bold mb-2 bell-mt">Learning Resources</h2>
+        <p class="text-gray-400 mb-6 bell-mt">Explore materials to enhance your coding skills</p>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+                <h3 class="text-xl font-semibold mb-4 bell-mt">Documentation</h3>
+                <div class="space-y-3">
+                    <a href="#" class="block p-3 bg-gray-800 rounded hover:bg-gray-700 transition duration-300">
+                        <div class="font-semibold bell-mt">React Documentation</div>
+                        <div class="text-sm text-gray-400 bell-mt">Official React docs</div>
+                    </a>
+                    <a href="#" class="block p-3 bg-gray-800 rounded hover:bg-gray-700 transition duration-300">
+                        <div class="font-semibold bell-mt">JavaScript Guide</div>
+                        <div class="text-sm text-gray-400 bell-mt">MDN Web Docs</div>
+                    </a>
+                    <a href="#" class="block p-3 bg-gray-800 rounded hover:bg-gray-700 transition duration-300">
+                        <div class="font-semibold bell-mt">Node.js Documentation</div>
+                        <div class="text-sm text-gray-400 bell-mt">Server-side JavaScript</div>
+                    </a>
+                    <a href="#" class="block p-3 bg-gray-800 rounded hover:bg-gray-700 transition duration-300">
+                        <div class="font-semibold bell-mt">TensorFlow Guide</div>
+                        <div class="text-sm text-gray-400 bell-mt">ML frameworks for beginners</div>
+                    </a>
+                </div>
+            </div>
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+                <h3 class="text-xl font-semibold mb-4 bell-mt">Video Tutorials</h3>
+                <div class="space-y-3">
+                    <a href="#" class="block p-3 bg-gray-800 rounded hover:bg-gray-700 transition duration-300">
+                        <div class="font-semibold bell-mt">Web Development Bootcamp</div>
+                        <div class="text-sm text-gray-400 bell-mt">20 hours of content</div>
+                        <div class="flex items-center text-xs mt-2">
+                            <i class="bi bi-star-fill text-yellow-500 mr-1"></i>
+                            <i class="bi bi-star-fill text-yellow-500 mr-1"></i>
+                            <i class="bi bi-star-fill text-yellow-500 mr-1"></i>
+                            <i class="bi bi-star-fill text-yellow-500 mr-1"></i>
+                            <i class="bi bi-star-half text-yellow-500 mr-2"></i>
+                            <span class="text-gray-400">4.5/5 (218 reviews)</span>
+                        </div>
+                    </a>
+                    <a href="#" class="block p-3 bg-gray-800 rounded hover:bg-gray-700 transition duration-300">
+                        <div class="font-semibold bell-mt">AI/ML Fundamentals</div>
+                        <div class="text-sm text-gray-400 bell-mt">15 hours of content</div>
+                        <div class="flex items-center text-xs mt-2">
+                            <i class="bi bi-star-fill text-yellow-500 mr-1"></i>
+                            <i class="bi bi-star-fill text-yellow-500 mr-1"></i>
+                            <i class="bi bi-star-fill text-yellow-500 mr-1"></i>
+                            <i class="bi bi-star-fill text-yellow-500 mr-1"></i>
+                            <i class="bi bi-star text-yellow-500 mr-2"></i>
+                            <span class="text-gray-400">4.0/5 (156 reviews)</span>
+                        </div>
+                    </a>
+                    <a href="#" class="block p-3 bg-gray-800 rounded hover:bg-gray-700 transition duration-300">
+                        <div class="font-semibold bell-mt">Blockchain Development</div>
+                        <div class="text-sm text-gray-400 bell-mt">18 hours of content</div>
+                        <div class="flex items-center text-xs mt-2">
+                            <i class="bi bi-star-fill text-yellow-500 mr-1"></i>
+                            <i class="bi bi-star-fill text-yellow-500 mr-1"></i>
+                            <i class="bi bi-star-fill text-yellow-500 mr-1"></i>
+                            <i class="bi bi-star-fill text-yellow-500 mr-1"></i>
+                            <i class="bi bi-star-half text-yellow-500 mr-2"></i>
+                            <span class="text-gray-400">4.7/5 (95 reviews)</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+                <h3 class="text-xl font-semibold mb-4 bell-mt">Practice Problems</h3>
+                <div class="space-y-3">
+                    <a href="#" class="block p-3 bg-gray-800 rounded hover:bg-gray-700 transition duration-300">
+                        <div class="font-semibold bell-mt">Algorithm Challenges</div>
+                        <div class="text-sm text-gray-400 bell-mt">100+ problems</div>
+                        <div class="flex mt-2">
+                            <span class="text-xs px-2 py-1 bg-green-900 rounded-full mr-2">Beginner</span>
+                            <span class="text-xs px-2 py-1 bg-yellow-900 rounded-full mr-2">Intermediate</span>
+                            <span class="text-xs px-2 py-1 bg-red-900 rounded-full">Advanced</span>
+                        </div>
+                    </a>
+                    <a href="#" class="block p-3 bg-gray-800 rounded hover:bg-gray-700 transition duration-300">
+                        <div class="font-semibold bell-mt">Coding Exercises</div>
+                        <div class="text-sm text-gray-400 bell-mt">50+ exercises</div>
+                        <div class="flex mt-2">
+                            <span class="text-xs px-2 py-1 bg-green-900 rounded-full mr-2">JavaScript</span>
+                            <span class="text-xs px-2 py-1 bg-green-900 rounded-full mr-2">Python</span>
+                            <span class="text-xs px-2 py-1 bg-green-900 rounded-full">Java</span>
+                        </div>
+                    </a>
+                    <a href="#" class="block p-3 bg-gray-800 rounded hover:bg-gray-700 transition duration-300">
+                        <div class="font-semibold bell-mt">Project Challenges</div>
+                        <div class="text-sm text-gray-400 bell-mt">25+ real-world projects</div>
+                        <div class="flex mt-2">
+                            <span class="text-xs px-2 py-1 bg-green-900 rounded-full mr-2">Frontend</span>
+                            <span class="text-xs px-2 py-1 bg-green-900 rounded-full mr-2">Backend</span>
+                            <span class="text-xs px-2 py-1 bg-green-900 rounded-full">Full Stack</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="text-2xl font-bold mt-10 mb-6 bell-mt">Club Resources</h2>
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+                <h3 class="text-xl font-semibold mb-4 bell-mt">Meeting Materials</h3>
+                <div class="space-y-3">
+                    <a href="#" class="block p-3 bg-gray-800 rounded hover:bg-gray-700 transition duration-300">
+                        <div class="font-semibold bell-mt">Web Dev Workshop - Oct 15</div>
+                        <div class="flex items-center mt-1 text-sm text-gray-400">
+                            <i class="bi bi-file-earmark-pdf mr-1"></i>
+                            <span>Slides & Exercises</span>
+                        </div>
+                    </a>
+                    <a href="#" class="block p-3 bg-gray-800 rounded hover:bg-gray-700 transition duration-300">
+                        <div class="font-semibold bell-mt">AI Project Discussion - Oct 14</div>
+                        <div class="flex items-center mt-1 text-sm text-gray-400">
+                            <i class="bi bi-file-earmark-code mr-1"></i>
+                            <span>Code Samples & Notes</span>
+                        </div>
+                    </a>
+                    <a href="#" class="block p-3 bg-gray-800 rounded hover:bg-gray-700 transition duration-300">
+                        <div class="font-semibold bell-mt">Blockchain Seminar - Oct 12</div>
+                        <div class="flex items-center mt-1 text-sm text-gray-400">
+                            <i class="bi bi-file-earmark-pdf mr-1"></i>
+                            <span>Presentation & Resources</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+                <h3 class="text-xl font-semibold mb-4 bell-mt">Exclusive Club Content</h3>
+                <div class="space-y-3">
+                    <a href="#" class="block p-3 bg-gray-800 rounded hover:bg-gray-700 transition duration-300">
+                        <div class="font-semibold bell-mt">Industry Partner Webinars</div>
+                        <div class="text-sm text-gray-400 bell-mt">Access to recorded sessions with tech leads</div>
+                    </a>
+                    <a href="#" class="block p-3 bg-gray-800 rounded hover:bg-gray-700 transition duration-300">
+                        <div class="font-semibold bell-mt">Interview Preparation</div>
+                        <div class="text-sm text-gray-400 bell-mt">Mock interviews and resume reviews</div>
+                    </a>
+                    <a href="#" class="block p-3 bg-gray-800 rounded hover:bg-gray-700 transition duration-300">
+                        <div class="font-semibold bell-mt">Hackathon Preparation Guides</div>
+                        <div class="text-sm text-gray-400 bell-mt">Tips and resources for winning hackathons</div>
+                    </a>
+                </div>
+                <div class="mt-4">
+                    <button class="w-full p-3 bg-green-600 rounded hover:bg-green-700 transition duration-300 bell-mt">Request New Resources</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Projects Page -->
+    <div id="projects" class="hidden pt-20 container mx-auto px-4 pb-10">
+        <h2 class="text-2xl font-bold mb-2 bell-mt">Projects</h2>
+        <p class="text-gray-400 mb-6 bell-mt">Manage, track, and showcase your coding projects</p>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+                <h3 class="text-xl font-semibold mb-4 bell-mt">Active Projects</h3>
+                <div class="space-y-4">
+                    <div class="p-4 bg-gray-800 rounded">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <div class="font-semibold bell-mt">E-commerce Website</div>
+                                <div class="text-sm text-gray-400 bell-mt">Due: Nov 1, 2023</div>
+                            </div>
+                            <span class="px-2 py-1 text-xs bg-yellow-600 rounded bell-mt">In Progress</span>
+                        </div>
+                        <div class="text-sm text-gray-300 mb-3 bell-mt">Building a responsive e-commerce platform with product listings, cart and checkout functionality.</div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm bell-mt">Progress</span>
+                            <span class="text-sm bell-mt">60%</span>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-2">
+                            <div class="bg-green-500 rounded-full h-2" style="width: 60%"></div>
+                        </div>
+                        <div class="flex mt-3 gap-2">
+                            <button class="px-3 py-1 bg-green-700 rounded hover:bg-green-600 text-sm transition duration-300 bell-mt">Update</button>
+                            <button class="px-3 py-1 bg-gray-700 rounded hover:bg-gray-600 text-sm transition duration-300 bell-mt">Submit</button>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-gray-800 rounded">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <div class="font-semibold bell-mt">Portfolio Website</div>
+                                <div class="text-sm text-gray-400 bell-mt">Due: Oct 30, 2023</div>
+                            </div>
+                            <span class="px-2 py-1 text-xs bg-yellow-600 rounded bell-mt">In Progress</span>
+                        </div>
+                        <div class="text-sm text-gray-300 mb-3 bell-mt">Creating a personal portfolio to showcase skills and projects.</div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm bell-mt">Progress</span>
+                            <span class="text-sm bell-mt">80%</span>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-2">
+                            <div class="bg-green-500 rounded-full h-2" style="width: 80%"></div>
+                        </div>
+                        <div class="flex mt-3 gap-2">
+                            <button class="px-3 py-1 bg-green-700 rounded hover:bg-green-600 text-sm transition duration-300 bell-mt">Update</button>
+                            <button class="px-3 py-1 bg-gray-700 rounded hover:bg-gray-600 text-sm transition duration-300 bell-mt">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+                <h3 class="text-xl font-semibold mb-4 bell-mt">Project Ideas</h3>
+                <div class="space-y-3">
+                    <div class="p-4 bg-gray-800 rounded">
+                        <div class="font-semibold bell-mt">AI Chat Bot</div>
+                        <div class="text-sm text-gray-400 bell-mt">Difficulty: Intermediate</div>
+                        <div class="text-sm text-gray-300 my-2 bell-mt">Build a conversational AI using natural language processing to answer queries and provide information.</div>
+                        <div class="flex flex-wrap mt-1 mb-3 gap-1">
+                            <span class="text-xs px-2 py-1 bg-green-900 rounded-full">Python</span>
+                            <span class="text-xs px-2 py-1 bg-green-900 rounded-full">NLP</span>
+                            <span class="text-xs px-2 py-1 bg-green-900 rounded-full">API</span>
+                        </div>
+                        <button class="mt-1 px-4 py-2 bg-green-600 rounded hover:bg-green-700 transition duration-300 bell-mt">Start Project</button>
+                    </div>
+                    <div class="p-4 bg-gray-800 rounded">
+                        <div class="font-semibold bell-mt">Blockchain Wallet</div>
+                        <div class="text-sm text-gray-400 bell-mt">Difficulty: Advanced</div>
+                        <div class="text-sm text-gray-300 my-2 bell-mt">Create a secure wallet application for managing cryptocurrency transactions and balances.</div>
+                        <div class="flex flex-wrap mt-1 mb-3 gap-1">
+                            <span class="text-xs px-2 py-1 bg-green-900 rounded-full">JavaScript</span>
+                            <span class="text-xs px-2 py-1 bg-green-900 rounded-full">Web3.js</span>
+                            <span class="text-xs px-2 py-1 bg-green-900 rounded-full">React</span>
+                        </div>
+                        <button class="mt-1 px-4 py-2 bg-green-600 rounded hover:bg-green-700 transition duration-300 bell-mt">Start Project</button>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+                <h3 class="text-xl font-semibold mb-4 bell-mt">Completed Projects</h3>
+                <div class="space-y-3">
+                    <div class="p-4 bg-gray-800 rounded">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="font-semibold bell-mt">Weather App</div>
+                                <div class="text-sm text-gray-400 bell-mt">Completed: Oct 10, 2023</div>
+                            </div>
+                            <span class="px-2 py-1 text-xs bg-green-600 rounded bell-mt">Complete</span>
+                        </div>
+                        <div class="mt-2 mb-2 text-sm text-gray-300 bell-mt">A weather application that displays current conditions and forecasts based on location.</div>
+                        <div class="flex flex-wrap gap-1 mb-2">
+                            <span class="text-xs px-2 py-1 bg-green-900 rounded-full">HTML/CSS</span>
+                            <span class="text-xs px-2 py-1 bg-green-900 rounded-full">JavaScript</span>
+                            <span class="text-xs px-2 py-1 bg-green-900 rounded-full">API</span>
+                        </div>
+                        <div class="flex items-center text-sm text-gray-400">
+                            <i class="bi bi-star-fill text-yellow-500 mr-1"></i>
+                            <span>Grade: A</span>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-gray-800 rounded">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="font-semibold bell-mt">Todo List</div>
+                                <div class="text-sm text-gray-400 bell-mt">Completed: Sep 25, 2023</div>
+                            </div>
+                            <span class="px-2 py-1 text-xs bg-green-600 rounded bell-mt">Complete</span>
+                        </div>
+                        <div class="mt-2 mb-2 text-sm text-gray-300 bell-mt">A task management application with features for adding, completing, and categorizing todos.</div>
+                        <div class="flex flex-wrap gap-1 mb-2">
+                            <span class="text-xs px-2 py-1 bg-green-900 rounded-full">React</span>
+                            <span class="text-xs px-2 py-1 bg-green-900 rounded-full">CSS</span>
+                            <span class="text-xs px-2 py-1 bg-green-900 rounded-full">LocalStorage</span>
+                        </div>
+                        <div class="flex items-center text-sm text-gray-400">
+                            <i class="bi bi-star-fill text-yellow-500 mr-1"></i>
+                            <span>Grade: B+</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="text-2xl font-bold mt-10 mb-6 bell-mt">Project Showcase</h2>
+        <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="bg-gray-800 rounded overflow-hidden">
+                    <div class="h-40 bg-gray-900 flex items-center justify-center">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzB8fHdlYnNpdGV8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60" alt="Project Screenshot" class="object-cover w-full h-full">
+                    </div>
+                    <div class="p-4">
+                        <div class="font-semibold bell-mt">E-commerce Website</div>
+                        <p class="text-xs text-gray-400 bell-mt">Created by: Alex Johnson</p>
+                        <div class="flex mt-2 gap-1">
+                            <span class="text-xs px-2 py-0.5 bg-green-900 rounded-full">React</span>
+                            <span class="text-xs px-2 py-0.5 bg-green-900 rounded-full">Node.js</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-800 rounded overflow-hidden">
+                    <div class="h-40 bg-gray-900 flex items-center justify-center">
+                        <img src="https://images.unsplash.com/photo-1555421689-3f034debb7a6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fHdlYnNpdGV8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60" alt="Project Screenshot" class="object-cover w-full h-full">
+                    </div>
+                    <div class="p-4">
+                        <div class="font-semibold bell-mt">Portfolio Template</div>
+                        <p class="text-xs text-gray-400 bell-mt">Created by: Maya Patel</p>
+                        <div class="flex mt-2 gap-1">
+                            <span class="text-xs px-2 py-0.5 bg-green-900 rounded-full">HTML/CSS</span>
+                            <span class="text-xs px-2 py-0.5 bg-green-900 rounded-full">JavaScript</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-800 rounded overflow-hidden">
+                    <div class="h-40 bg-gray-900 flex items-center justify-center">
+                        <img src="https://images.unsplash.com/photo-1607252650355-f7fd0460ccdb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YWklMjBhcHB8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60" alt="Project Screenshot" class="object-cover w-full h-full">
+                    </div>
+                    <div class="p-4">
+                        <div class="font-semibold bell-mt">AI Image Generator</div>
+                        <p class="text-xs text-gray-400 bell-mt">Created by: Raj Sharma</p>
+                        <div class="flex mt-2 gap-1">
+                            <span class="text-xs px-2 py-0.5 bg-green-900 rounded-full">Python</span>
+                            <span class="text-xs px-2 py-0.5 bg-green-900 rounded-full">TensorFlow</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-6">
+                <button class="px-6 py-2 bg-green-600 rounded hover:bg-green-700 transition duration-300 bell-mt">View All Projects</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Page -->
+    <div id="profile" class="hidden pt-20 container mx-auto px-4 pb-10">
+        <h2 class="text-2xl font-bold mb-6 bell-mt">Your Profile</h2>
+        <div class="grid md:grid-cols-3 gap-6">
+            <div class="md:col-span-1 bg-black/40 p-6 rounded-lg border border-green-500/20">
+                <div class="flex flex-col items-center">
+                    <div class="w-32 h-32 rounded-full overflow-hidden mb-4">
+                        <img id="profile-image" class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8YXZhdGFyfGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60" alt="Profile">
+                    </div>
+                    <h3 class="text-xl font-semibold mb-1 bell-mt" id="profile-name">Developer Name</h3>
+                    <p class="text-green-500 mb-2 bell-mt" id="profile-domain">Frontend Development</p>
+                    <div class="text-sm text-gray-400 mb-4 bell-mt">Member since Sept 2023</div>
+                    <div class="flex space-x-4 mb-6">
+                        <a href="#" class="text-2xl text-gray-400 hover:text-green-500"><i class="bi bi-github"></i></a>
+                        <a href="#" class="text-2xl text-gray-400 hover:text-green-500"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="text-2xl text-gray-400 hover:text-green-500"><i class="bi bi-envelope-fill"></i></a>
+                    </div>
+                    <button onclick="editProfile()" class="w-full px-4 py-2 bg-green-600 rounded hover:bg-green-700 transition duration-300 bell-mt">Edit Profile</button>
+                </div>
+            </div>
+            <div class="md:col-span-2 space-y-6">
+                <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+                    <h3 class="text-xl font-semibold mb-4 bell-mt">About Me</h3>
+                    <p class="text-gray-300 mb-4 bell-mt">I'm a passionate frontend developer with expertise in React and modern JavaScript. Currently pursuing my degree in Computer Science, I'm focused on building responsive and accessible web applications.</p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="font-semibold mb-2 bell-mt">Skills</h4>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="text-sm px-3 py-1 bg-green-900 rounded-full">HTML/CSS</span>
+                                <span class="text-sm px-3 py-1 bg-green-900 rounded-full">JavaScript</span>
+                                <span class="text-sm px-3 py-1 bg-green-900 rounded-full">React</span>
+                                <span class="text-sm px-3 py-1 bg-green-900 rounded-full">Node.js</span>
+                                <span class="text-sm px-3 py-1 bg-green-900 rounded-full">Git</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold mb-2 bell-mt">Interests</h4>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="text-sm px-3 py-1 bg-gray-700 rounded-full">Web Development</span>
+                                <span class="text-sm px-3 py-1 bg-gray-700 rounded-full">UI/UX Design</span>
+                                <span class="text-sm px-3 py-1 bg-gray-700 rounded-full">Open Source</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+                    <h3 class="text-xl font-semibold mb-4 bell-mt">Club Stats</h3>
+                    <div class="grid grid-cols-3 gap-4 mb-4">
+                        <div class="bg-gray-800/70 p-3 rounded text-center">
+                            <div class="text-2xl font-bold text-green-500">90%</div>
+                            <div class="text-sm text-gray-400 bell-mt">Attendance</div>
+                        </div>
+                        <div class="bg-gray-800/70 p-3 rounded text-center">
+                            <div class="text-2xl font-bold text-green-500">8</div>
+                            <div class="text-sm text-gray-400 bell-mt">Projects</div>
+                        </div>
+                        <div class="bg-gray-800/70 p-3 rounded text-center">
+                            <div class="text-2xl font-bold text-green-500">4</div>
+                            <div class="text-sm text-gray-400 bell-mt">Achievements</div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-2 bell-mt">Contribution Activity</h4>
+                        <div class="grid grid-cols-7 grid-rows-5 gap-1">
+                            <!-- Contribution graph similar to GitHub -->
+                            <div class="w-full h-4 bg-green-900/30 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/50 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/70 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/40 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/20 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/60 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/80 rounded"></div>
+                            <!-- Second row -->
+                            <div class="w-full h-4 bg-green-900/50 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/30 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/80 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/90 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/70 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/40 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/20 rounded"></div>
+                            <!-- More contribution cells for the grid -->
+                            <div class="w-full h-4 bg-green-900/10 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/60 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/40 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/70 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/50 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/90 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/30 rounded"></div>
+                            <!-- Fourth row -->
+                            <div class="w-full h-4 bg-green-900/70 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/40 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/20 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/50 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/80 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/30 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/10 rounded"></div>
+                            <!-- Fifth row -->
+                            <div class="w-full h-4 bg-green-900/30 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/50 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/70 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/40 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/20 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/60 rounded"></div>
+                            <div class="w-full h-4 bg-green-900/80 rounded"></div>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-500 mt-1 bell-mt">
+                            <span>Less</span>
+                            <span>More</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Club Progress Page -->
+    <div id="club-progress" class="hidden pt-20 container mx-auto px-4 pb-10">
+        <h2 class="text-2xl font-bold mb-2 bell-mt">Club Progress</h2>
+        <p class="text-gray-400 mb-6 bell-mt">Overall performance and statistics of PointBlack Coding Club</p>
+        
+        <div class="grid md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-black/40 p-4 rounded-lg border border-green-500/20 text-center">
+                <div class="text-3xl font-bold text-green-500">42</div>
+                <div class="text-gray-400 bell-mt">Active Members</div>
+            </div>
+            <div class="bg-black/40 p-4 rounded-lg border border-green-500/20 text-center">
+                <div class="text-3xl font-bold text-green-500">28</div>
+                <div class="text-gray-400 bell-mt">Completed Projects</div>
+            </div>
+            <div class="bg-black/40 p-4 rounded-lg border border-green-500/20 text-center">
+                <div class="text-3xl font-bold text-green-500">85%</div>
+                <div class="text-gray-400 bell-mt">Avg. Attendance</div>
+            </div>
+            <div class="bg-black/40 p-4 rounded-lg border border-green-500/20 text-center">
+                <div class="text-3xl font-bold text-green-500">4</div>
+                <div class="text-gray-400 bell-mt">Upcoming Events</div>
+            </div>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-6 mb-6">
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+                <h3 class="text-xl font-semibold mb-4 bell-mt">Domain Distribution</h3>
+                <div class="mb-4">
+                    <canvas id="domainChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+                <h3 class="text-xl font-semibold mb-4 bell-mt">Monthly Attendance</h3>
+                <div class="mb-4">
+                    <canvas id="attendanceChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-6">
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+                <h3 class="text-xl font-semibold mb-4 bell-mt">Top Members</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center p-3 bg-gray-800/80 rounded">
+                        <div class="mr-3 w-10 h-10 flex items-center justify-center bg-yellow-600 rounded-full">1</div>
+                        <div>
+                            <div class="font-semibold bell-mt">Alex Johnson</div>
+                            <div class="text-sm text-gray-400 bell-mt">Frontend Development</div>
+                        </div>
+                        <div class="ml-auto text-green-500 font-semibold">120 pts</div>
+                    </div>
+                    <div class="flex items-center p-3 bg-gray-800/80 rounded">
+                        <div class="mr-3 w-10 h-10 flex items-center justify-center bg-gray-500 rounded-full">2</div>
+                        <div>
+                            <div class="font-semibold bell-mt">Maya Patel</div>
+                            <div class="text-sm text-gray-400 bell-mt">AI/ML</div>
+                        </div>
+                        <div class="ml-auto text-green-500 font-semibold">95 pts</div>
+                    </div>
+                    <div class="flex items-center p-3 bg-gray-800/80 rounded">
+                        <div class="mr-3 w-10 h-10 flex items-center justify-center bg-amber-700 rounded-full">3</div>
+                        <div>
+                            <div class="font-semibold bell-mt">Raj Sharma</div>
+                            <div class="text-sm text-gray-400 bell-mt">Backend Development</div>
+                        </div>
+                        <div class="ml-auto text-green-500 font-semibold">87 pts</div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+                <h3 class="text-xl font-semibold mb-4 bell-mt">Project Completion Rate</h3>
+                <div class="mb-4">
+                    <canvas id="completionRateChart" width="400" height="250"></canvas>
+                </div>
+            </div>
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+                <h3 class="text-xl font-semibold mb-4 bell-mt">Growth Metrics</h3>
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="bell-mt">Member Growth</span>
+                            <span class="bell-mt">+35%</span>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-2">
+                            <div class="bg-green-500 rounded-full h-2" style="width: 35%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="bell-mt">Project Completion</span>
+                            <span class="bell-mt">+42%</span>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-2">
+                            <div class="bg-green-500 rounded-full h-2" style="width: 42%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="bell-mt">Knowledge Base</span>
+                            <span class="bell-mt">+65%</span>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-2">
+                            <div class="bg-green-500 rounded-full h-2" style="width: 65%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="bell-mt">Event Participation</span>
+                            <span class="bell-mt">+28%</span>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-2">
+                            <div class="bg-green-500 rounded-full h-2" style="width: 28%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Domains Page -->
+    <div id="domains" class="hidden pt-20 container mx-auto px-4 pb-10">
+        <h2 class="text-2xl font-bold mb-2 bell-mt">Technical Domains</h2>
+        <p class="text-gray-400 mb-6 bell-mt">Explore the different domains and specializations offered by PointBlack Coding Club</p>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20 hover:border-green-500 transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <i class="bi bi-palette text-3xl text-green-500 mr-3"></i>
+                    <h3 class="text-xl font-semibold bell-mt">UI/UX Design</h3>
+                </div>
+                <p class="text-gray-300 mb-4 bell-mt">Learn to design beautiful, intuitive user interfaces and create engaging user experiences that keep users coming back.</p>
+                <div class="space-y-2 mb-4">
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Wireframing & Prototyping</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">User Research</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Design Systems</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Usability Testing</span>
+                    </div>
+                </div>
+                <div class="flex items-center text-sm text-gray-400 mb-4">
+                    <i class="bi bi-people-fill mr-2"></i>
+                    <span class="bell-mt">15 Members</span>
+                </div>
+                <button class="w-full bg-green-600 hover:bg-green-700 p-2 rounded font-semibold transition duration-300 bell-mt">Join Domain</button>
+            </div>
+            
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20 hover:border-green-500 transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <i class="bi bi-brush text-3xl text-green-500 mr-3"></i>
+                    <h3 class="text-xl font-semibold bell-mt">Graphic Design</h3>
+                </div>
+                <p class="text-gray-300 mb-4 bell-mt">Master visual communication through typography, color theory, and digital illustration to create impactful visual assets.</p>
+                <div class="space-y-2 mb-4">
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Adobe Creative Suite</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Brand Identity</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Motion Graphics</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Digital Illustration</span>
+                    </div>
+                </div>
+                <div class="flex items-center text-sm text-gray-400 mb-4">
+                    <i class="bi bi-people-fill mr-2"></i>
+                    <span class="bell-mt">12 Members</span>
+                </div>
+                <button class="w-full bg-green-600 hover:bg-green-700 p-2 rounded font-semibold transition duration-300 bell-mt">Join Domain</button>
+            </div>
+            
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20 hover:border-green-500 transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <i class="bi bi-code-slash text-3xl text-green-500 mr-3"></i>
+                    <h3 class="text-xl font-semibold bell-mt">Web Development</h3>
+                </div>
+                <p class="text-gray-300 mb-4 bell-mt">Build responsive, dynamic websites using modern frameworks and technologies that power the modern web.</p>
+                <div class="space-y-2 mb-4">
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">HTML5 & CSS3</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">JavaScript & Frameworks</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Responsive Design</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Web Performance</span>
+                    </div>
+                </div>
+                <div class="flex items-center text-sm text-gray-400 mb-4">
+                    <i class="bi bi-people-fill mr-2"></i>
+                    <span class="bell-mt">25 Members</span>
+                </div>
+                <button class="w-full bg-green-600 hover:bg-green-700 p-2 rounded font-semibold transition duration-300 bell-mt">Join Domain</button>
+            </div>
+            
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20 hover:border-green-500 transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <i class="bi bi-clipboard-data text-3xl text-green-500 mr-3"></i>
+                    <h3 class="text-xl font-semibold bell-mt">Data Science</h3>
+                </div>
+                <p class="text-gray-300 mb-4 bell-mt">Extract meaningful insights from complex datasets using statistical analysis, visualization, and machine learning techniques.</p>
+                <div class="space-y-2 mb-4">
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Python & Libraries (Pandas, NumPy)</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Data Visualization</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Statistical Analysis</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Big Data Processing</span>
+                    </div>
+                </div>
+                <div class="flex items-center text-sm text-gray-400 mb-4">
+                    <i class="bi bi-people-fill mr-2"></i>
+                    <span class="bell-mt">18 Members</span>
+                </div>
+                <button class="w-full bg-green-600 hover:bg-green-700 p-2 rounded font-semibold transition duration-300 bell-mt">Join Domain</button>
+            </div>
+            
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20 hover:border-green-500 transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <i class="bi bi-gear text-3xl text-green-500 mr-3"></i>
+                    <h3 class="text-xl font-semibold bell-mt">DevOps</h3>
+                </div>
+                <p class="text-gray-300 mb-4 bell-mt">Bridge the gap between development and operations by automating and optimizing deployment pipelines and infrastructure.</p>
+                <div class="space-y-2 mb-4">
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">CI/CD Pipelines</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Docker & Kubernetes</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Infrastructure as Code</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Monitoring & Logging</span>
+                    </div>
+                </div>
+                <div class="flex items-center text-sm text-gray-400 mb-4">
+                    <i class="bi bi-people-fill mr-2"></i>
+                    <span class="bell-mt">10 Members</span>
+                </div>
+                <button class="w-full bg-green-600 hover:bg-green-700 p-2 rounded font-semibold transition duration-300 bell-mt">Join Domain</button>
+            </div>
+            
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20 hover:border-green-500 transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <i class="bi bi-phone text-3xl text-green-500 mr-3"></i>
+                    <h3 class="text-xl font-semibold bell-mt">App Development</h3>
+                </div>
+                <p class="text-gray-300 mb-4 bell-mt">Develop native and cross-platform mobile applications for iOS and Android that deliver engaging user experiences.</p>
+                <div class="space-y-2 mb-4">
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">React Native</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Flutter</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Native Android (Kotlin/Java)</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">iOS (Swift)</span>
+                    </div>
+                </div>
+                <div class="flex items-center text-sm text-gray-400 mb-4">
+                    <i class="bi bi-people-fill mr-2"></i>
+                    <span class="bell-mt">16 Members</span>
+                </div>
+                <button class="w-full bg-green-600 hover:bg-green-700 p-2 rounded font-semibold transition duration-300 bell-mt">Join Domain</button>
+            </div>
+            
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20 hover:border-green-500 transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <i class="bi bi-robot text-3xl text-green-500 mr-3"></i>
+                    <h3 class="text-xl font-semibold bell-mt">Machine Learning</h3>
+                </div>
+                <p class="text-gray-300 mb-4 bell-mt">Build intelligent systems that can learn from data and make predictions or decisions without explicit programming.</p>
+                <div class="space-y-2 mb-4">
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Supervised & Unsupervised Learning</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Neural Networks</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Natural Language Processing</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Computer Vision</span>
+                    </div>
+                </div>
+                <div class="flex items-center text-sm text-gray-400 mb-4">
+                    <i class="bi bi-people-fill mr-2"></i>
+                    <span class="bell-mt">20 Members</span>
+                </div>
+                <button class="w-full bg-green-600 hover:bg-green-700 p-2 rounded font-semibold transition duration-300 bell-mt">Join Domain</button>
+            </div>
+            
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20 hover:border-green-500 transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <i class="bi bi-layers text-3xl text-green-500 mr-3"></i>
+                    <h3 class="text-xl font-semibold bell-mt">Full Stack</h3>
+                </div>
+                <p class="text-gray-300 mb-4 bell-mt">Develop end-to-end web applications by mastering both frontend and backend technologies and understanding how they work together.</p>
+                <div class="space-y-2 mb-4">
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">MERN/MEAN Stack</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">API Development</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Database Design</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Server Management</span>
+                    </div>
+                </div>
+                <div class="flex items-center text-sm text-gray-400 mb-4">
+                    <i class="bi bi-people-fill mr-2"></i>
+                    <span class="bell-mt">22 Members</span>
+                </div>
+                <button class="w-full bg-green-600 hover:bg-green-700 p-2 rounded font-semibold transition duration-300 bell-mt">Join Domain</button>
+            </div>
+            
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20 hover:border-green-500 transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <i class="bi bi-shield-lock text-3xl text-green-500 mr-3"></i>
+                    <h3 class="text-xl font-semibold bell-mt">Cybersecurity</h3>
+                </div>
+                <p class="text-gray-300 mb-4 bell-mt">Protect systems, networks, and data from digital attacks by learning offensive and defensive security strategies.</p>
+                <div class="space-y-2 mb-4">
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Penetration Testing</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Network Security</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Cryptography</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Security Auditing</span>
+                    </div>
+                </div>
+                <div class="flex items-center text-sm text-gray-400 mb-4">
+                    <i class="bi bi-people-fill mr-2"></i>
+                    <span class="bell-mt">14 Members</span>
+                </div>
+                <button class="w-full bg-green-600 hover:bg-green-700 p-2 rounded font-semibold transition duration-300 bell-mt">Join Domain</button>
+            </div>
+            
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20 hover:border-green-500 transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <i class="bi bi-cpu text-3xl text-green-500 mr-3"></i>
+                    <h3 class="text-xl font-semibold bell-mt">Deep Learning</h3>
+                </div>
+                <p class="text-gray-300 mb-4 bell-mt">Specialize in advanced neural networks and AI algorithms to solve complex problems in computer vision, NLP, and more.</p>
+                <div class="space-y-2 mb-4">
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">TensorFlow & PyTorch</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Convolutional Neural Networks</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Recurrent Neural Networks</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Reinforcement Learning</span>
+                    </div>
+                </div>
+                <div class="flex items-center text-sm text-gray-400 mb-4">
+                    <i class="bi bi-people-fill mr-2"></i>
+                    <span class="bell-mt">12 Members</span>
+                </div>
+                <button class="w-full bg-green-600 hover:bg-green-700 p-2 rounded font-semibold transition duration-300 bell-mt">Join Domain</button>
+            </div>
+            
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20 hover:border-green-500 transition-all duration-300">
+                <div class="flex items-center mb-4">
+                    <i class="bi bi-trophy text-3xl text-green-500 mr-3"></i>
+                    <h3 class="text-xl font-semibold bell-mt">Competitive Programming</h3>
+                </div>
+                <p class="text-gray-300 mb-4 bell-mt">Master algorithms, data structures, and problem-solving techniques to compete in programming contests and technical interviews.</p>
+                <div class="space-y-2 mb-4">
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Data Structures</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Algorithms</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Dynamic Programming</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="bi bi-check-circle-fill text-green-500 mr-2"></i>
+                        <span class="text-sm bell-mt">Competitive Strategies</span>
+                    </div>
+                </div>
+                <div class="flex items-center text-sm text-gray-400 mb-4">
+                    <i class="bi bi-people-fill mr-2"></i>
+                    <span class="bell-mt">17 Members</span>
+                </div>
+                <button class="w-full bg-green-600 hover:bg-green-700 p-2 rounded font-semibold transition duration-300 bell-mt">Join Domain</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Events Page -->
+    <div id="events" class="hidden pt-20 container mx-auto px-4 pb-10">
+        <h2 class="text-2xl font-bold mb-2 bell-mt">Events & Workshops</h2>
+        <p class="text-gray-400 mb-6 bell-mt">Stay updated with all the exciting activities happening at PointBlack Coding Club</p>
+        
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex space-x-4">
+                <button class="px-4 py-2 bg-green-600 rounded hover:bg-green-700 transition duration-300 bell-mt">All Events</button>
+                <button class="px-4 py-2 bg-gray-800 rounded hover:bg-gray-700 transition duration-300 bell-mt">Workshops</button>
+                <button class="px-4 py-2 bg-gray-800 rounded hover:bg-gray-700 transition duration-300 bell-mt">Hackathons</button>
+            </div>
+            <div class="hidden md:block">
+                <input type="text" placeholder="Search events..." class="px-4 py-2 bg-gray-800 rounded border border-gray-700 focus:border-green-500 focus:outline-none bell-mt">
+            </div>
+        </div>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Upcoming Events -->
+            <div class="col-span-full mb-4">
+                <h3 class="text-xl font-semibold mb-4 bell-mt">Upcoming Events</h3>
+            </div>
+            
+            <!-- Event Card 1 -->
+            <div class="bg-black/40 rounded-lg border border-green-500/20 overflow-hidden hover:border-green-500 transition-all duration-300">
+                <div class="h-48 bg-gray-800 relative">
+                    <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fGhhY2thdGhvbnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60" alt="Hackathon Event" class="w-full h-full object-cover">
+                    <div class="absolute top-4 right-4 p-3 bg-green-600 rounded-md text-center">
+                        <span class="block font-bold">25</span>
+                        <span class="text-sm">Oct</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold mb-2 bell-mt">Annual College Hackathon</h3>
+                    <p class="text-gray-300 mb-4 bell-mt">A 24-hour coding marathon to build innovative solutions. Form teams and compete for amazing prizes!</p>
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="flex items-center text-sm text-gray-400">
+                            <i class="bi bi-geo-alt mr-1"></i>
+                            <span class="bell-mt">Main Campus, CS Building</span>
+                        </span>
+                        <span class="flex items-center text-sm text-gray-400">
+                            <i class="bi bi-clock mr-1"></i>
+                            <span class="bell-mt">9:00 AM - 9:00 AM</span>
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="px-2 py-1 text-xs bg-green-900 rounded-full bell-mt">Hackathon</span>
+                        <button class="px-4 py-2 bg-green-600 rounded hover:bg-green-700 transition duration-300 text-sm bell-mt">Register Now</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Event Card 2 -->
+            <div class="bg-black/40 rounded-lg border border-green-500/20 overflow-hidden hover:border-green-500 transition-all duration-300">
+                <div class="h-48 bg-gray-800 relative">
+                    <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8d29ya3Nob3B8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60" alt="Workshop Event" class="w-full h-full object-cover">
+                    <div class="absolute top-4 right-4 p-3 bg-green-600 rounded-md text-center">
+                        <span class="block font-bold">20</span>
+                        <span class="text-sm">Oct</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold mb-2 bell-mt">React Advanced Techniques</h3>
+                    <p class="text-gray-300 mb-4 bell-mt">Learn advanced React patterns, hooks, and state management from industry professionals.</p>
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="flex items-center text-sm text-gray-400">
+                            <i class="bi bi-geo-alt mr-1"></i>
+                            <span class="bell-mt">Room 302, Tech Building</span>
+                        </span>
+                        <span class="flex items-center text-sm text-gray-400">
+                            <i class="bi bi-clock mr-1"></i>
+                            <span class="bell-mt">5:00 PM - 8:00 PM</span>
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="px-2 py-1 text-xs bg-blue-900 rounded-full bell-mt">Workshop</span>
+                        <button class="px-4 py-2 bg-green-600 rounded hover:bg-green-700 transition duration-300 text-sm bell-mt">Register Now</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Event Card 3 -->
+            <div class="bg-black/40 rounded-lg border border-green-500/20 overflow-hidden hover:border-green-500 transition-all duration-300">
+                <div class="h-48 bg-gray-800 relative">
+                    <img src="https://images.unsplash.com/photo-1591115765373-5207764f72e7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Z3Vlc3QlMjBzcGVha2VyfGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60" alt="Tech Talk Event" class="w-full h-full object-cover">
+                    <div class="absolute top-4 right-4 p-3 bg-green-600 rounded-md text-center">
+                        <span class="block font-bold">22</span>
+                        <span class="text-sm">Oct</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold mb-2 bell-mt">AI in Modern Applications</h3>
+                    <p class="text-gray-300 mb-4 bell-mt">Guest speaker from Google discusses implementing AI solutions in everyday applications.</p>
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="flex items-center text-sm text-gray-400">
+                            <i class="bi bi-geo-alt mr-1"></i>
+                            <span class="bell-mt">Auditorium, Main Campus</span>
+                        </span>
+                        <span class="flex items-center text-sm text-gray-400">
+                            <i class="bi bi-clock mr-1"></i>
+                            <span class="bell-mt">4:00 PM - 6:00 PM</span>
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="px-2 py-1 text-xs bg-purple-900 rounded-full bell-mt">Tech Talk</span>
+                        <button class="px-4 py-2 bg-green-600 rounded hover:bg-green-700 transition duration-300 text-sm bell-mt">Register Now</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Past Events Section -->
+            <div class="col-span-full mt-8 mb-4">
+                <h3 class="text-xl font-semibold mb-4 bell-mt">Past Events</h3>
+            </div>
+            
+            <!-- Past Event Cards (Greyed out) -->
+            <div class="bg-black/20 rounded-lg border border-gray-800 overflow-hidden">
+                <div class="h-48 bg-gray-800 relative opacity-60">
+                    <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y29kaW5nJTIwY29tcGV0aXRpb258ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=800&q=60" alt="Coding Competition" class="w-full h-full object-cover">
+                    <div class="absolute top-4 right-4 p-3 bg-gray-600 rounded-md text-center">
+                        <span class="block font-bold">15</span>
+                        <span class="text-sm">Sep</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold mb-2 text-gray-400 bell-mt">Code Wars: Algorithmic Challenge</h3>
+                    <p class="text-gray-500 mb-4 bell-mt">Competitive programming event focused on algorithm optimization and problem-solving.</p>
+                    <div class="flex justify-between">
+                        <span class="px-2 py-1 text-xs bg-gray-700 rounded-full bell-mt">Competition</span>
+                        <button class="px-4 py-2 bg-gray-700 rounded text-sm bell-mt">View Recap</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-black/20 rounded-lg border border-gray-800 overflow-hidden">
+                <div class="h-48 bg-gray-800 relative opacity-60">
+                    <img src="https://images.unsplash.com/photo-1542626991-cbc4e32524cc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGNvZGluZyUyMHdvcmtzaG9wfGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60" alt="Web Dev Workshop" class="w-full h-full object-cover">
+                    <div class="absolute top-4 right-4 p-3 bg-gray-600 rounded-md text-center">
+                        <span class="block font-bold">10</span>
+                        <span class="text-sm">Sep</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold mb-2 text-gray-400 bell-mt">Introduction to Web3 Development</h3>
+                    <p class="text-gray-500 mb-4 bell-mt">Workshop covering the basics of blockchain technology and developing decentralized applications.</p>
+                    <div class="flex justify-between">
+                        <span class="px-2 py-1 text-xs bg-gray-700 rounded-full bell-mt">Workshop</span>
+                        <button class="px-4 py-2 bg-gray-700 rounded text-sm bell-mt">View Materials</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Calendar Section -->
+        <div class="mt-12">
+            <h3 class="text-xl font-semibold mb-6 bell-mt">Events Calendar</h3>
+            <div class="bg-black/40 p-6 rounded-lg border border-green-500/20">
+                <div class="grid grid-cols-7 gap-2 mb-2 text-center">
+                    <div class="text-gray-500 bell-mt">Sun</div>
+                    <div class="text-gray-500 bell-mt">Mon</div>
+                    <div class="text-gray-500 bell-mt">Tue</div>
+                    <div class="text-gray-500 bell-mt">Wed</div>
+                    <div class="text-gray-500 bell-mt">Thu</div>
+                    <div class="text-gray-500 bell-mt">Fri</div>
+                    <div class="text-gray-500 bell-mt">Sat</div>
+                </div>
+                <div class="grid grid-cols-7 gap-2 text-center">
+                    <!-- Previous month dates, greyed out -->
+                    <div class="p-2 text-gray-600 bell-mt">24</div>
+                    <div class="p-2 text-gray-600 bell-mt">25</div>
+                    <div class="p-2 text-gray-600 bell-mt">26</div>
+                    <div class="p-2 text-gray-600 bell-mt">27</div>
+                    <div class="p-2 text-gray-600 bell-mt">28</div>
+                    <div class="p-2 text-gray-600 bell-mt">29</div>
+                    <div class="p-2 text-gray-600 bell-mt">30</div>
+                    
+                    <!-- Current month dates -->
+                    <div class="p-2 bell-mt">1</div>
+                    <div class="p-2 bell-mt">2</div>
+                    <div class="p-2 bell-mt">3</div>
+                    <div class="p-2 bell-mt">4</div>
+                    <div class="p-2 bell-mt">5</div>
+                    <div class="p-2 bell-mt">6</div>
+                    <div class="p-2 bell-mt">7</div>
+                    <div class="p-2 bell-mt">8</div>
+                    <div class="p-2 bell-mt">9</div>
+                    <div class="p-2 bell-mt">10</div>
+                    <div class="p-2 bell-mt">11</div>
+                    <div class="p-2 bell-mt">12</div>
+                    <div class="p-2 bell-mt">13</div>
+                    <div class="p-2 bell-mt">14</div>
+                    <div class="p-2 bell-mt">15</div>
+                    <div class="p-2 bell-mt">16</div>
+                    <div class="p-2 bell-mt">17</div>
+                    <div class="p-2 bell-mt">18</div>
+                    <div class="p-2 bell-mt">19</div>
+                    <div class="p-2 bell-mt bg-green-900/40 rounded-full">20</div>
+                    <div class="p-2 bell-mt">21</div>
+                    <div class="p-2 bell-mt bg-purple-900/40 rounded-full">22</div>
+                    <div class="p-2 bell-mt">23</div>
+                    <div class="p-2 bell-mt">24</div>
+                    <div class="p-2 bell-mt bg-green-900/40 rounded-full font-bold border border-green-500">25</div>
+                    <div class="p-2 bell-mt">26</div>
+                    <div class="p-2 bell-mt">27</div>
+                    <div class="p-2 bell-mt">28</div>
+                    <div class="p-2 bell-mt">29</div>
+                    <div class="p-2 bell-mt">30</div>
+                    <div class="p-2 bell-mt">31</div>
+                    
+                    <!-- Next month dates, greyed out -->
+                    <div class="p-2 text-gray-600 bell-mt">1</div>
+                    <div class="p-2 text-gray-600 bell-mt">2</div>
+                    <div class="p-2 text-gray-600 bell-mt">3</div>
+                    <div class="p-2 text-gray-600 bell-mt">4</div>
+                </div>
+                <div class="flex justify-center mt-4 space-x-4">
+                    <div class="flex items-center">
+                        <div class="w-4 h-4 bg-green-900 rounded-full mr-1"></div>
+                        <span class="text-sm bell-mt">Workshop</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-4 h-4 bg-purple-900 rounded-full mr-1"></div>
+                        <span class="text-sm bell-mt">Tech Talk</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-4 h-4 border border-green-500 rounded-full mr-1"></div>
+                        <span class="text-sm bell-mt">Hackathon</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="help-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-gray-800 rounded-lg p-6 max-w-md w-full">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold bell-mt">Need Help?</h3>
+                <button onclick="closeHelpModal()" class="text-gray-400 hover:text-white">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <form class="space-y-4">
+                <div>
+                    <label class="block mb-2 bell-mt">Subject</label>
+                    <select class="w-full p-2 rounded bg-gray-700 border border-gray-600 bell-mt">
+                        <option>Technical Issue</option>
+                        <option>Project Help</option>
+                        <option>Resource Request</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block mb-2 bell-mt">Message</label>
+                    <textarea class="w-full p-2 rounded bg-gray-700 border border-gray-600 bell-mt" rows="4" placeholder="Describe your issue..."></textarea>
+                </div>
+                <button type="button" onclick="submitHelp()" class="w-full bg-green-600 hover:bg-green-700 p-2 rounded font-semibold transition duration-300 bell-mt">Submit</button>
+            </form>
+            <p class="text-sm text-center mt-4 text-gray-400 bell-mt">For urgent help, contact club admin at admin@pointblack.edu</p>
+        </div>
+    </div>
+
+    <script>
+        // Page Navigation
+        function switchPage(pageId) {
+            document.querySelectorAll('div[id]').forEach(div => {
+                if (div.id !== 'nav-links' && div.id !== 'profile-section' && div.id !== 'mobile-menu' && div.id !== 'help-modal') {
+                    div.classList.add('hidden');
+                }
+            });
+            document.getElementById(pageId).classList.remove('hidden');
+            document.querySelectorAll('nav a').forEach(a => a.classList.remove('nav-active'));
+            document.querySelector(`nav a[onclick="switchPage('${pageId}')"]`).classList.add('nav-active');
+        }
+
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        }
+
+        // Login Form Handler
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const userName = document.getElementById('user-name-input').value;
+            const userDomain = document.getElementById('user-domain-select').options[document.getElementById('user-domain-select').selectedIndex].text;
+            
+            document.getElementById('user-name').textContent = userName;
+            document.getElementById('user-domain').textContent = userDomain;
+            document.getElementById('progress-user-name').textContent = userName + "'s";
+            document.getElementById('profile-name').textContent = userName;
+            document.getElementById('profile-domain').textContent = userDomain;
+            
+            const profilePhoto = document.getElementById('profile-photo').files[0];
+            if (profilePhoto) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('user-avatar').src = event.target.result;
+                    document.getElementById('profile-image').src = event.target.result;
+                };
+                reader.readAsDataURL(profilePhoto);
+            } else {
+                document.getElementById('user-avatar').src = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8YXZhdGFyfGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60';
+                document.getElementById('profile-image').src = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8YXZhdGFyfGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60';
+            }
+            
+            document.getElementById('login-page').classList.add('hidden');
+            document.getElementById('nav-links').classList.remove('hidden');
+            document.getElementById('profile-section').classList.remove('hidden');
+            switchPage('dashboard');
+            
+            // Initialize charts after login
+            initializeCharts();
+            
+            // Initialize swiper after dashboard is shown
+            initializeSwiper();
+        });
+        
+        // Initialize Swiper
+        function initializeSwiper() {
+            new Swiper(".mySwiper", {
+                slidesPerView: 1,
+                spaceBetween: 20,
+                pagination: {
+                    el: ".swiper-pagination",
+                    clickable: true,
+                },
+                breakpoints: {
+                    640: {
+                        slidesPerView: 2,
+                    },
+                    1024: {
+                        slidesPerView: 3,
+                    },
+                },
+                autoplay: {
+                    delay: 3000,
+                    disableOnInteraction: false,
+                },
+            });
+        }
+        
+        // Login existing user (simplified for demo)
+        function loginExisting() {
+            document.getElementById('user-name-input').value = "John Doe";
+            document.getElementById('user-domain-select').value = "Web Development";
+            document.getElementById('login-form').dispatchEvent(new Event('submit'));
+        }
+
+        // Attendance Form Handler
+        document.getElementById('attendance-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Attendance marked successfully!');
+        });
+
+        // Logout Handler
+        function logout() {
+            document.getElementById('nav-links').classList.add('hidden');
+            document.getElementById('profile-section').classList.add('hidden');
+            document.getElementById('login-page').classList.remove('hidden');
+            document.querySelectorAll('div[id]').forEach(div => {
+                if (div.id !== 'login-page' && div.id !== 'nav-links' && div.id !== 'profile-section') {
+                    div.classList.add('hidden');
+                }
+            });
+        }
+        
+        // Help Modal Functions
+        function openHelpModal() {
+            document.getElementById('help-modal').classList.remove('hidden');
+        }
+        
+        function closeHelpModal() {
+            document.getElementById('help-modal').classList.add('hidden');
+        }
+        
+        function submitHelp() {
+            alert('Your help request has been submitted. A club admin will contact you soon.');
+            closeHelpModal();
+        }
+        
+        // Edit Profile (simplified for demo)
+        function editProfile() {
+            alert('Profile editing functionality would be implemented here.');
+        }
+        
+        // Charts initialization
+        function initializeCharts() {
+            // Skills Chart - Radar Chart
+            const skillsCtx = document.getElementById('skillsChart').getContext('2d');
+            const skillsChart = new Chart(skillsCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['HTML/CSS', 'JavaScript', 'React', 'Node.js', 'Git', 'UI/UX'],
+                    datasets: [{
+                        label: 'Current Skills',
+                        data: [90, 75, 60, 45, 80, 70],
+                        backgroundColor: 'rgba(34, 197, 94, 0.2)',
+                        borderColor: 'rgba(34, 197, 94, 1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    scales: {
+                        r: {
+                            angleLines: {
+                                color: 'rgba(255, 255, 255, 0.2)'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.2)'
+                            },
+                            pointLabels: {
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                font: {
+                                    family: 'Bell MT'
+                                }
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                backdropColor: 'transparent'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                font: {
+                                    family: 'Bell MT'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Activity Pie Chart
+            const activityCtx = document.getElementById('activityPieChart').getContext('2d');
+            const activityPieChart = new Chart(activityCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Coding Projects', 'Learning', 'Meetings', 'Collaborations'],
+                    datasets: [{
+                        data: [40, 25, 20, 15],
+                        backgroundColor: [
+                            'rgba(34, 197, 94, 0.8)',
+                            'rgba(59, 130, 246, 0.8)',
+                            'rgba(249, 115, 22, 0.8)',
+                            'rgba(168, 85, 247, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(34, 197, 94, 1)',
+                            'rgba(59, 130, 246, 1)',
+                            'rgba(249, 115, 22, 1)',
+                            'rgba(168, 85, 247, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                padding: 20,
+                                font: {
+                                    family: 'Bell MT'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Domain Distribution Chart
+            const domainCtx = document.getElementById('domainChart').getContext('2d');
+            const domainChart = new Chart(domainCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Web Dev', 'UI/UX', 'AI/ML', 'App Dev', 'Full Stack', 'Cybersecurity', 'Others'],
+                    datasets: [{
+                        data: [25, 15, 20, 16, 12, 8, 4],
+                        backgroundColor: [
+                            'rgba(34, 197, 94, 0.8)',
+                            'rgba(59, 130, 246, 0.8)',
+                            'rgba(249, 115, 22, 0.8)',
+                            'rgba(168, 85, 247, 0.8)',
+                            'rgba(236, 72, 153, 0.8)',
+                            'rgba(234, 179, 8, 0.8)',
+                            'rgba(75, 85, 99, 0.8)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                font: {
+                                    family: 'Bell MT'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Monthly Attendance Chart
+            const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
+            const attendanceChart = new Chart(attendanceCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+                    datasets: [{
+                        label: 'Attendance Rate (%)',
+                        data: [75, 78, 82, 88, 85],
+                        backgroundColor: 'rgba(34, 197, 94, 0.2)',
+                        borderColor: 'rgba(34, 197, 94, 1)',
+                        borderWidth: 2,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 70,
+                            max: 100,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                font: {
+                                    family: 'Bell MT'
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                font: {
+                                    family: 'Bell MT'
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                font: {
+                                    family: 'Bell MT'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Completion Rate Chart
+            const completionCtx = document.getElementById('completionRateChart').getContext('2d');
+            const completionChart = new Chart(completionCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+                    datasets: [{
+                        label: 'Completed Projects',
+                        data: [4, 6, 5, 7, 6],
+                        backgroundColor: 'rgba(34, 197, 94, 0.8)'
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                font: {
+                                    family: 'Bell MT'
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                font: {
+                                    family: 'Bell MT'
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                font: {
+                                    family: 'Bell MT'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+<script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+	</body>
+</html>
